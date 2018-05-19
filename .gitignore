@@ -1,0 +1,7 @@
+.idea/
+node_modules/
+*.log
+package-lock.json
+
+# OS X
+.DS_Store
