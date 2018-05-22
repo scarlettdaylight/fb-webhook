@@ -1,5 +1,6 @@
 'use strict';
-import { handleMessage, handlePostback, callSendAPI } from './message';
+import { handleMessage } from './message';
+import { getMessageWithKeyword } from './database';
 
 // Imports dependencies and set up http server
 require('dotenv').config();
@@ -8,22 +9,6 @@ const body_parser = require('body-parser');
 
 // creates express http server
 const app = express().use(body_parser.json());
-
-// Make a connection to database
-const mysql = require('mysql');
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_TABLE,
-});
-// connection.connect(function (err) {
-//   if (err) {
-//     console.error('error connecting: ' + err.stack);
-//     return;
-//   }
-//   console.log('connected as id ' + connection.threadId);
-// });
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
@@ -41,6 +26,10 @@ app.post('/webhook', (req, res) => {
 
     // Iterate over each entry - there may be multiple if batched
     body.entry.forEach(function (entry) {
+
+      if (!entry.messaging) {
+        res.status(200).send('No message received');
+      }
 
       // Gets the body of the webhook event
       let webhook_event = entry.messaging[0];

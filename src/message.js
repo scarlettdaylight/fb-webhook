@@ -1,32 +1,37 @@
+import { getMessageWithKeyword } from './database';
+
 const request = require('request');
 
 /** ********* Helper function for messaging ********* */
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
 
-  let response;
-
-  // Check if the message contains text
-  if (received_message.text) {
-
-    // Create the payload for a basic text message
-    response = {
-      'text': `You sent the message: "${received_message.text}". Now send me an image!`,
-    };
+  if (!received_message.text) {
+    return;
   }
+  const messagePromise = getMessageWithKeyword(received_message.text);
+  messagePromise.then(function (responseMsg) {
+    if (responseMsg !== null) {
+      // Sends the response message
+      console.log(responseMsg);
+      callSendAPI(sender_psid, responseMsg);
+    }
+  }, function (reason) {
+    // on reject
+  });
 
-  // Sends the response message
-  callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API
 function callSendAPI(sender_psid, response) {
   // Construct the message body
-  let request_body = {
+  const request_body = {
     'recipient': {
       'id': sender_psid,
     },
-    'message': response,
+    'message': {
+      'text': response,
+    },
   };
 
   // Send the HTTP request to the Messenger Platform
@@ -38,6 +43,7 @@ function callSendAPI(sender_psid, response) {
   }, (err, res, body) => {
     if (!err) {
       console.log('message sent!');
+      console.log(body);
     } else {
       console.error('Unable to send message:' + err);
     }
@@ -45,4 +51,4 @@ function callSendAPI(sender_psid, response) {
 
 }
 
-module.exports = {handleMessage, handlePostback, callSendAPI};
+module.exports = {handleMessage, callSendAPI};
