@@ -1,13 +1,15 @@
 'use strict';
+import { handleMessage, handlePostback, callSendAPI } from './message';
 
 // Imports dependencies and set up http server
 require('dotenv').config();
-const
-  request = require('request'),
-  express = require('express'),
-  body_parser = require('body-parser'),
-  app = express().use(body_parser.json()); // creates express http server
+const express = require('express');
+const body_parser = require('body-parser');
 
+// creates express http server
+const app = express().use(body_parser.json());
+
+// Make a connection to database
 const mysql = require('mysql');
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -26,6 +28,8 @@ connection.connect(function (err) {
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
+/** ********* App listen function ********* */
+
 // Accepts POST requests at /webhook endpoint
 app.post('/webhook', (req, res) => {
 
@@ -38,10 +42,13 @@ app.post('/webhook', (req, res) => {
     // Iterate over each entry - there may be multiple if batched
     body.entry.forEach(function (entry) {
 
-      // Get the webhook event. entry.messaging is an array, but 
-      // will only ever contain one event, so we get index 0
+      // Gets the body of the webhook event
       let webhook_event = entry.messaging[0];
       console.log(webhook_event);
+
+      // Get the sender PSID
+      let sender_psid = webhook_event.sender.id;
+      console.log('Sender PSID: ' + sender_psid);
 
     });
 

@@ -5,7 +5,7 @@
   "main": "App.js",
   "scripts": {
     "test": "",
-    "start": "node app.js"
+    "start": "babel src -d dist -s; node dist/App.js"
   },
   "author": "liketolove",
   "license": "ISC",
@@ -18,5 +18,9 @@
   },
   "engines": {
     "node": "~4.1.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
   }
 }
