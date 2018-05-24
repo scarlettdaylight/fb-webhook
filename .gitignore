@@ -3,6 +3,7 @@ node_modules/
 *.log
 package-lock.json
 .env
+dist/
 
 # OS X
 .DS_Store

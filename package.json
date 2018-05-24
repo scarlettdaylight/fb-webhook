@@ -5,7 +5,8 @@
   "main": "App.js",
   "scripts": {
     "test": "",
-    "start": "node app.js"
+    "build" : "babel src -d dist -s; node dist/App.js;",
+    "start-dev": "nodemon --watch src/ --exec 'npm run build'"
   },
   "author": "liketolove",
   "license": "ISC",
@@ -18,5 +19,10 @@
   },
   "engines": {
     "node": "~4.1.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^1.17.4"
   }
 }
